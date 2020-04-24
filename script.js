@@ -4,6 +4,7 @@ let UIController = (function() {
         addBtn: '.add',
         todo: '#todo',
         container: '.content',
+        chek: '.todolist',
     }
 
     return {
@@ -12,19 +13,23 @@ let UIController = (function() {
                 add:document.querySelector(DOM.addBtn),
                 list:document.querySelector(DOM.todo).value,
                 del:document.querySelector(DOM.delete),
+                check:document.querySelector(DOM.chek),
             }
         },
         addListItem: function(activities) {
-            let html, newHtml
-
-            html = '<div class="main" id="main-%id%"> <input type="checkbox" name="todolist" id="todolist" value="random"> <h4> %activities% </h4><button class="delete"> <img src="./images/cross.svg" alt="cross.png" class="image" id="image"></button></div>'
-            newHtml = html.replace('%activities%', activities)
+            let html, newHtml, id 
+            id = Math.floor(Math.random() * 10)
+            html = '<div class="main" id="main-%id%"> <input type="checkbox" name="todolist" id="todolist" class="todolist" value="random"> <h4> %activities% </h4><span class="delete" id="close"> <img src="./image/cross.svg" alt="cross.png" class="image" id="image"></span></div>'
+            newHtml = html.replace('%id%', id)
+            newHtml = newHtml.replace('%activities%', activities)
             document.querySelector('.content').insertAdjacentHTML('beforeend', newHtml)
         },
-        deleteListItem: function(id) {
-            let el = document.getElementById(id)
-            // console.log(el)
-            el.parentNode.removeChild(el)
+        deleteListItem: function(id, close) {
+            el = document.getElementById(id)
+            el.parentNode.removeChild(el)           
+        },
+        checked: function() {
+
         },
         getDOM: function() {
             return DOM
@@ -47,13 +52,17 @@ let globalController = (function(UICtrl) {
             }
         })
 
+        
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem)
+
+        document.querySelector(DOM.container).addEventListener('click', ctrlStrikeItem)
+        
     }
 
     let ctrlAddItem= function() {
-        let input, newItem
-
+        let input, newItem        
         input = UICtrl.getinput()
+        
         if(input.list !== ""){
             UICtrl.addListItem(input.list)
             console.log(input.list)
@@ -67,16 +76,26 @@ let globalController = (function(UICtrl) {
 
     let ctrlDeleteItem = function(event) {
         let itemId = event.target.parentNode.parentNode.id
+        // console.log(itemId)
+        // let itemClass = event.target.parentNode.className
+        // console.log(itemClass)
+        
+        // let close = document.getElementsByClassName(itemClass)
+        // console.log(close.length)
         if(itemId){
             UICtrl.deleteListItem(itemId)
         } 
+    }
+
+    let ctrlStrikeItem = function() {
+        let itemId = event.target.id
+        console.log(itemId)
     }
 
     return {
         init: function() {
             console.log('Application has Started..Now')
             setupEventListeners()
-            ctrlDeleteItem
         }
     }
 
